@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Barang extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'kode',
         'nama',
@@ -13,11 +16,11 @@ class Barang extends Model
         'harga',
         'minimum_stok',
         'tanggal_masuk',
+        'user_id',
     ];
 
-    // helper untuk cek menipis
-    public function getMenipisAttribute()
+    public function user()
     {
-        return $this->stok < $this->minimum_stok;
+        return $this->belongsTo(User::class);
     }
 }

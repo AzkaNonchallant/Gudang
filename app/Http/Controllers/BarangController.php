@@ -6,12 +6,13 @@ use App\Models\Barang;
 use Illuminate\Http\Request;
 use App\Mail\StokMenipisMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 class BarangController extends Controller
 {
     public function index()
     {
-        $barangs = Barang::orderBy('id', 'desc')->get();
+        $barangs = Barang::with('user')->orderBy('id', 'desc')->get();
         return view('barangs.index', compact('barangs'));
     }
 
@@ -22,6 +23,10 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
+        if (!Auth::check()) {
+            return back()->withErrors(['msg' => 'Kamu harus login dulu!']);
+        }
+
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             'stok' => 'required|integer|min:0',
@@ -32,9 +37,11 @@ class BarangController extends Controller
 
         // Generate kode otomatis (BRG001, BRG002, ...)
         $last = Barang::latest('id')->first();
-        $kode = 'BRG' . str_pad(($last?->id ?? 0) + 1, 3, '0', STR_PAD_LEFT);
+        $nextId = $last ? $last->id + 1 : 1;
+        $kode = 'BRG' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
 
         $barang = Barang::create([
+            'user_id' => Auth::id(), // simpan user yang upload
             'kode' => $kode,
             'nama' => $data['nama'],
             'stok' => $data['stok'],
@@ -43,9 +50,7 @@ class BarangController extends Controller
             'tanggal_masuk' => $data['tanggal_masuk'],
         ]);
 
-        // Jika stok di bawah minimum, kirim email notifikasi (opsional)
         if ($barang->stok < $barang->minimum_stok) {
-            // ganti email admin sesuai kebutuhan
             Mail::to(config('mail.admin_address', env('MAIL_ADMIN', 'admin@example.com')))
                 ->send(new StokMenipisMail($barang));
         }
@@ -73,9 +78,9 @@ class BarangController extends Controller
             'stok' => $data['stok'],
             'harga' => $data['harga'],
             'minimum_stok' => $data['minimum_stok'] ?? $barang->minimum_stok,
+            'tanggal_masuk' => $data['tanggal_masuk'],
         ]);
 
-        // cek dan kirim email jika menipis
         if ($barang->stok < $barang->minimum_stok) {
             Mail::to(config('mail.admin_address', env('MAIL_ADMIN', 'admin@example.com')))
                 ->send(new StokMenipisMail($barang));

@@ -10,10 +10,11 @@ return new class extends Migration
     {
         Schema::create('barangs', function (Blueprint $table) {
             $table->id();
-            $table->string('kode')->unique(); // auto-generate
+            $table->string('kode')->unique();
             $table->string('nama');
             $table->integer('stok');
             $table->decimal('harga', 12, 2);
+            $table->integer('minimum_stok')->default(1);
             $table->date('tanggal_masuk')->nullable();
             $table->timestamps();
         });
