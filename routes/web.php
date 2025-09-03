@@ -7,11 +7,11 @@ use App\Http\Controllers\ChartController;
 use App\Http\Controllers\UserController;
 
 // ======================
-// AUTH
+// AUTH ROUTES
 // ======================
 Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/register',  [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
@@ -20,7 +20,8 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 // PROTECTED ROUTES
 // ======================
 Route::middleware('auth')->group(function () {
-    // Barang CRUD
+
+    // Barang CRUD (staff/admin)
     Route::resource('barangs', BarangController::class);
 
     // Dashboard chart
@@ -32,7 +33,7 @@ Route::middleware('auth')->group(function () {
     // ======================
     // ADMIN ONLY
     // ======================
-    Route::middleware('admin')->group(function () {
-        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+    Route::middleware('admin')->prefix('admin')->as('admin.')->group(function () {
+        Route::resource('users', UserController::class);
     });
 });

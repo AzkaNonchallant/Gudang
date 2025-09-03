@@ -13,14 +13,34 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seeder user admin
+        // ✅ Admin
         User::firstOrCreate(
-            ['email' => 'admin@mail.com'], // cek email sudah ada atau belum
+            ['email' => 'admin@mail.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password123'),
+                'role' => 'admin',
             ]
         );
 
+        // ✅ Staff Gudang
+        User::firstOrCreate(
+            ['email' => 'staff@mail.com'],
+            [
+                'name' => 'Staff Gudang',
+                'password' => Hash::make('password123'),
+                'role' => 'staff',
+            ]
+        );
+
+        // ✅ Viewer
+        User::firstOrCreate(
+            ['email' => 'viewer@mail.com'],
+            [
+                'name' => 'Viewer',
+                'password' => Hash::make('password123'),
+                'role' => 'viewer',
+            ]
+        );
     }
 }

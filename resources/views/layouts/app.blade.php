@@ -23,6 +23,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('barangs.index') }}">Barang</a>
                     </li>
+
+                    @auth
+                        @if(Auth::user()->role === 'admin')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.users.index') }}">Manajemen User</a>
+                            </li>
+                        @endif
+                    @endauth
                 </ul>
 
                 {{-- ✅ kanan untuk auth --}}

@@ -1,32 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Tambah Barang</h1>
+<h2 class="mb-3">Tambah Barang</h2>
 
-    <form action="{{ route('barangs.store') }}" method="POST">
-        @csrf
-        <div class="mb-3">
-            <label>Nama Barang</label>
-            <input type="text" name="nama" class="form-control" required>
-        </div>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $err)
+                <li>{{ $err }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-        <div class="mb-3">
-            <label>Stok</label>
-            <input type="number" name="stok" class="form-control" required>
-        </div>
+<form action="{{ route('barangs.store') }}" method="POST" class="card card-body">
+    @csrf
 
-        <div class="mb-3">
-            <label>Harga</label>
-            <input type="number" name="harga" class="form-control" required>
-        </div>
+    <div class="mb-3">
+        <label class="form-label">Kode Barang</label>
+        <input type="text" name="kode" class="form-control" value="{{ old('kode') }}">
+    </div>
 
-        <div class="mb-3">
-            <label>Tanggal Masuk</label>
-            <input type="date" name="tanggal_masuk" class="form-control" required>
-        </div>
+    <div class="mb-3">
+        <label class="form-label">Nama Barang</label>
+        <input type="text" name="nama" class="form-control" value="{{ old('nama') }}" required>
+    </div>
 
+    <div class="mb-3">
+        <label class="form-label">Stok</label>
+        <input type="number" name="stok" class="form-control" value="{{ old('stok') }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Harga</label>
+        <input type="number" step="0.01" name="harga" class="form-control" value="{{ old('harga') }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Minimum Stok</label>
+        <input type="number" name="minimum_stok" class="form-control" value="{{ old('minimum_stok', 1) }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Tanggal Masuk</label>
+        <input type="date" name="tanggal_masuk" class="form-control" value="{{ old('tanggal_masuk') }}">
+    </div>
+
+    <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary">Simpan</button>
-    </form>
-</div>
+        <a href="{{ route('barangs.index') }}" class="btn btn-secondary">Batal</a>
+    </div>
+</form>
 @endsection
